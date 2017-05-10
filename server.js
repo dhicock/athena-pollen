@@ -149,6 +149,8 @@ function buildSlackResponse(baseJson, responsetype){
 			}
 			attachment['title'] = 'Report for '+city+', '+state;
 			attachment["title_link"] = baseJson.DailyForecasts[0].Link;
+			console.log('user:' + user);
+			attachment['text'] = 'Requested by @' + user;
 			var temp = baseJson.DailyForecasts[0].Temperature;
 			var feelsLike = baseJson.DailyForecasts[0].RealFeelTemperature;
 			attachment['fields'] = [
@@ -196,7 +198,6 @@ function sendMessageToSlack(JSONmessage){
 	JSONmessage['channel']= channel;
 	JSONmessage['ts'] = ts;
 	JSONmessage['response_type']='in_channel';
-	JSONmessage['text'] = '@' + user;
 
 	web.chat.postMessage(channel, '', JSONmessage, function(err, res){
 		if(err){
