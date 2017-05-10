@@ -120,8 +120,6 @@ function buildSlackResponse(baseJson, responsetype){
 	var formattedJson = {};
 	formattedJson['as_user'] = false;
 	formattedJson['attachments'] = [];
-	formattedJson['ts'] = ts;
-	formattedJson['response_type']='in_channel';
 	var airAndPollen = baseJson.DailyForecasts[0].AirAndPollen;
 	
 	console.log(baseJson.DailyForecasts[0].Link);
@@ -194,6 +192,8 @@ function sendMessageToSlack(JSONmessage){
 	console.log('Token: ' + token);
 	console.log('Channel: ' + channel);
 	JSONmessage['channel']= channel;
+	JSONmessage['ts'] = ts;
+	JSONmessage['response_type']='in_channel';
 
 	web.chat.postMessage(channel, '', JSONmessage, function(err, res){
 		if(err){
