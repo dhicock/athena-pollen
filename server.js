@@ -1,6 +1,5 @@
 var express = require('express');
 var app = express();
-var pg = require('pg');
 var request = require('request');
 var bodyParser = require('body-parser');
 var SlackClient = require('@slack/client').WebClient;
@@ -17,6 +16,7 @@ var state;
 var token = process.env.SLACK_API_TOKEN;
 var channel;
 var web;
+var ts;
 
 app.post('/pollenme', function(req, res) {
 	console.log('Message received!\nMessage: '+JSON.stringify(req.body));
@@ -74,6 +74,7 @@ app.post('/pollen', function(req, res) {
 		return help(req, res);
 	}
 	channel = req.body.channel_id;
+	ts = req.body.ts;
 	var responseUrl = req.body.response_url;
 	var key = '';
 	request('http://dataservice.accuweather.com/locations/v1/search?apikey='+apiKey+'&q='+q, function(error, response, body){
@@ -114,20 +115,19 @@ function help(req, res){
 	res.send(helpJson).end();
 };
 
-function buildSlackResponse(baseJson, response_type){
+function buildSlackResponse(baseJson){
 	
 	var formattedJson = {};
 	formattedJson['as_user'] = false;
 	formattedJson['attachments'] = [];
-	formattedJson['response_type'] = response_type || 'in_channel';
-	formattedJson['footer'] = 'Data from accuweather';
-
+	formattedJson['ts'] = ts;
 	var airAndPollen = baseJson.DailyForecasts[0].AirAndPollen;
 	
 	console.log(baseJson.DailyForecasts[0].Link);
 	var attachment = {};
 	airAndPollen.forEach(function(item, index) {
 		attachment['fallback'] = 'Weather failed to load';
+		attachment['footer'] = 'Data from accuweather';
 
 		if(item.Name == 'AirQuality'){
 			var airQuality = true;
@@ -154,17 +154,17 @@ function buildSlackResponse(baseJson, response_type){
 				{
 					"title": "Air Quality",
 					"value": item.Category,
-					"short": false
+					"short": true
 				},
 				{
 					"title": "High (Feels like)",
 					"value": temp.Maximum.Value + temp.Maximum.Unit + " (" + feelsLike.Maximum.Value + feelsLike.Maximum.Unit + ")",
-					"short": false
+					"short": true
 				},
 				{
 					"title": "Low (Feels like)",
 					"value": temp.Minimum.Value + temp.Minimum.Unit + " (" + feelsLike.Minimum.Value + feelsLike.Minimum.Unit + ")",
-					"short": false
+					"short": true
 				}
 			];
 		}else if (uvIndex){
@@ -172,7 +172,7 @@ function buildSlackResponse(baseJson, response_type){
 				{
 					"title": "UV Index",
 					"value": item.Category+' ('+item.Value+')',
-					"short": false
+					"short": true
 				}
 			);
 		}else{
@@ -180,7 +180,7 @@ function buildSlackResponse(baseJson, response_type){
 				{
 					"title": item.Name + ' (PPM)',
 					"value": item.Category+' ('+item.Value+')',
-					"short": false
+					"short": true
 				}
 			);
 		}
