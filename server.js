@@ -76,7 +76,7 @@ app.post('/pollen', function(req, res) {
 	}
 	channel = req.body.channel_id;
 	ts = req.body.ts;
-	var user = req.body.user_name;
+	user = req.body.user_name;
 	var responseUrl = req.body.response_url;
 	var key = '';
 	request('http://dataservice.accuweather.com/locations/v1/search?apikey='+apiKey+'&q='+q, function(error, response, body){
