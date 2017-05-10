@@ -150,7 +150,7 @@ function buildSlackResponse(baseJson, responsetype){
 			attachment['title'] = 'Report for '+city+', '+state;
 			attachment["title_link"] = baseJson.DailyForecasts[0].Link;
 			console.log('user:' + user);
-			attachment['text'] = 'Requested by @' + user;
+			attachment['text'] = 'Requested by <@' + user + '>';
 			var temp = baseJson.DailyForecasts[0].Temperature;
 			var feelsLike = baseJson.DailyForecasts[0].RealFeelTemperature;
 			attachment['fields'] = [
