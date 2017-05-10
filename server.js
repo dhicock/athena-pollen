@@ -17,6 +17,7 @@ var token = process.env.SLACK_API_TOKEN;
 var channel;
 var web;
 var ts;
+var user;
 
 app.post('/pollenme', function(req, res) {
 	console.log('Message received!\nMessage: '+JSON.stringify(req.body));
@@ -75,6 +76,7 @@ app.post('/pollen', function(req, res) {
 	}
 	channel = req.body.channel_id;
 	ts = req.body.ts;
+	var user = req.body.user_name;
 	var responseUrl = req.body.response_url;
 	var key = '';
 	request('http://dataservice.accuweather.com/locations/v1/search?apikey='+apiKey+'&q='+q, function(error, response, body){
@@ -120,6 +122,7 @@ function buildSlackResponse(baseJson, responsetype){
 	var formattedJson = {};
 	formattedJson['as_user'] = false;
 	formattedJson['attachments'] = [];
+	formattedJson['text'] = '@' + user;
 	var airAndPollen = baseJson.DailyForecasts[0].AirAndPollen;
 	
 	console.log(baseJson.DailyForecasts[0].Link);
