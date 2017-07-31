@@ -103,6 +103,7 @@ app.post('/pollen', function(req, res) {
 					return;
 				}
 				web = new SlackClient(token);
+				console.log(body);
 				var slackMsg = buildSlackResponse(JSON.parse(body));
 				sendMessageToSlack(slackMsg);
 				res.end();
