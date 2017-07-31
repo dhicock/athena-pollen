@@ -103,7 +103,6 @@ app.post('/pollen', function(req, res) {
 					return;
 				}
 				web = new SlackClient(token);
-				console.log(body);
 				var slackMsg = buildSlackResponse(JSON.parse(body));
 				sendMessageToSlack(slackMsg);
 				res.end();
@@ -119,7 +118,7 @@ function help(req, res){
 };
 
 function buildSlackResponse(baseJson, responsetype){
-	
+	console.log(JSON.stringify(baseJson));
 	var formattedJson = {};
 	formattedJson['as_user'] = false;
 	formattedJson['attachments'] = [];
